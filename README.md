@@ -167,5 +167,170 @@ install(
 ament_package()
 ```
  
+### Launch it again 
+
+```bash
+ros2 launch articubot_one rsp.launch.py
+```
+### To add material to ur urdf 
+```bash
+<material name="white">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+    </material>
+
+    <material name="orange">
+        <color rgba="1.0 0.3 0.1 1.0"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0.2 0.2 1.0 1.0"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+```
+
+### To add link to ur urdf 
+```bash
+<link name="base_link">
+    
+    </link>
+```
+### Paste this code in the robot_core.xacro
+```bash
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Include inertial m<xacro:include filename="path/to/inertial_macros.xacro"/>acros -->
+    <xacro:include filename="inertial_macros.xacro"/>
+
+ <!-- Ensure the correct path or update it if needed -->
+
+    <!-- Define Materials -->
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <material name="orange"> <!-- Changed name from 'white' to 'orange' to avoid duplicate material names -->
+        <color rgba="1 0.3 0.1 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0.2 0.2 1 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <!-- Base Link -->
+    <link name="base_link"/>
+
+    <!-- Chassis Link -->
+    <joint name="chassis_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis"/>
+        <origin xyz="-0.1 0 0"/>
+    </joint>
+
+    <link name="chassis">
+        <visual>
+            <origin xyz="0.15 0 0.075"/>
+            <geometry>
+                <box size="0.3 0.3 0.15"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="0.5" x="0.3" y="0.3" z="0.15">
+            <origin xyz="0.15 0.0 0.075" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_box> <!-- Closing tag for xacro macro -->
+    </link>
+
+    <!-- Left Wheel Link -->
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel"/>
+        <origin xyz="0.0 0.175 0.0" rpy="-${pi/2} 0.0 0.0"/>
+        <axis xyz="0.0 0.0 1.0"/>
+    </joint>
+
+    <link name="left_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.05">
+            <origin xyz="0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_cylinder> <!-- Closing tag for xacro macro -->
+    </link>
+
+    <!-- Right Wheel Link -->
+    <joint name="right_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <origin xyz="0.0 -0.175 0.0" rpy="${pi/2} 0.0 0.0"/>
+        <axis xyz="0.0 0.0 -1.0"/>
+    </joint>
+
+    <link name="right_wheel">
+        <visual>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.05" length="0.04"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.1" length="0.04" radius="0.05">
+            <origin xyz="0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_cylinder> <!-- Closing tag for xacro macro -->
+    </link>
+
+    <!-- Caster Wheel Link -->
+    <joint name="caster_wheel_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel"/>
+        <origin xyz="0.24 0.0 0.0"/>
+    </joint>
+
+    <link name="caster_wheel">
+        <visual>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="0.05"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_sphere mass="0.1" radius="0.05">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_sphere> <!-- Closing tag for xacro macro -->
+    </link>
+
+</robot>
+```
+### Run the File 
+```bash
+ros2 run joint_state_publisher_gui joint_state_publisher_gui
+```
 
 
